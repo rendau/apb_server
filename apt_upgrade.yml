@@ -1,0 +1,5 @@
+- hosts: all
+  tasks:
+    - name: Upgrade packages
+      apt:
+        upgrade: dist

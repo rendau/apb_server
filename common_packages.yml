@@ -1,0 +1,6 @@
+- hosts: all
+  tasks:
+    - name: Install common packages
+      apt:
+        pkg: [ 'aptitude', 'htop' ]
+        update_cache: yes

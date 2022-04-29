@@ -1,0 +1,13 @@
+- hosts: all
+  tasks:
+    - name: create user
+      user:
+        name: user
+        password: "{{ 'user' | password_hash('sha512', 'paswsalt') }}"
+        shell: /bin/bash
+        groups: ['sudo']
+        append: yes
+    - name: Set authorized key
+      authorized_key:
+        user: user
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

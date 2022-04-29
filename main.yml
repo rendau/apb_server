@@ -1,0 +1,12 @@
+- name: ping
+  import_playbook: ping.yml
+- name: users
+  import_playbook: users.yml
+- name: apt_upgrade
+  import_playbook: apt_upgrade.yml
+- name: common_packages
+  import_playbook: common_packages.yml
+- name: docker
+  import_playbook: docker.yml
+- name: user_to_docker_group
+  import_playbook: user_to_docker_group.yml
