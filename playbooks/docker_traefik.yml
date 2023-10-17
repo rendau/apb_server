@@ -1,0 +1,26 @@
+- hosts: all
+  tasks:
+    - name: Create a directory for letsencrypt
+      ansible.builtin.file:
+        path: /opt/data/letsencrypt
+        state: directory
+        mode: '0777'
+
+    - name: Create a network traefik
+      docker_network:
+        name: traefik
+        driver: overlay
+        attachable: yes
+
+    - name: Copy compose file
+      template:
+        src: "{{ playbook_dir }}/../docker_stacks/traefik.yml"
+        dest: /home/user/docker_stacks/
+        owner: user
+
+    - name: Deploy stack 'traefik'
+      community.docker.docker_stack:
+        state: present
+        name: traefik
+        compose:
+          - /home/user/docker_stacks/traefik.yml

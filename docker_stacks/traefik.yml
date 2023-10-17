@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:v2.4
+    command:
+      - --accesslog=false
+      - --log.level=ERROR
+      - --api.insecure=true
+      - --providers.docker
+      - --providers.docker.swarmMode=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=traefik
+      - --providers.docker.watch=true
+      - --entryPoints.http.address=:80
+      - --entryPoints.https.address=:443
+      - --entrypoints.http.http.redirections.entryPoint.to=https
+      - --entrypoints.http.http.redirections.entryPoint.scheme=https
+      - --entrypoints.http.http.redirections.entrypoint.permanent=true
+      - --certificatesresolvers.httpresolver.acme.httpchallenge=true
+      - --certificatesresolvers.httpresolver.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.httpresolver.acme.email=dauren.asir@gmail.com
+      - --certificatesresolvers.httpresolver.acme.storage=/letsencrypt/acme.json
+    ports:
+      - 80:80
+      - 443:443
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [ node.role == manager ]
+      restart_policy:
+        condition: any
+        delay: 5s
+    volumes:
+      - /opt/data/letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik
+
+
+networks:
+  traefik:
+    external: true

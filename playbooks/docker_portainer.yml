@@ -1,0 +1,18 @@
+- hosts: all
+  tasks:
+    - name: Create a volume
+      docker_volume:
+        name: portainer_data
+
+    - name: Copy compose file
+      template:
+        src: "{{ playbook_dir }}/../docker_stacks/portainer.yml"
+        dest: /home/user/docker_stacks/
+        owner: user
+
+    - name: Deploy stack 'portainer'
+      community.docker.docker_stack:
+        state: present
+        name: portainer
+        compose:
+          - /home/user/docker_stacks/portainer.yml

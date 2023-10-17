@@ -1,0 +1,17 @@
+- hosts: all
+  tasks:
+    - name: Init a new swarm with default parameters
+      community.docker.docker_swarm:
+        state: present
+
+    - name: Create a stacks directory
+      ansible.builtin.file:
+        state: directory
+        path: /home/user/docker_stacks
+        owner: user
+
+    - name: Create a network services
+      docker_network:
+        name: services
+        driver: overlay
+        attachable: yes
