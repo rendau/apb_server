@@ -4,27 +4,26 @@
       apt:
         pkg: [ 'apt-transport-https','ca-certificates', 'gnupg-agent', 'curl', 'software-properties-common', 'bash-completion' ]
         update_cache: yes
-    - name: Add Docker s GPG key for ubuntu from official site
-      apt_key:
+        state: present
+    - name: Create directory /etc/apt/keyrings with permissions 0755
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+    - name: Download Docker's official GPG key
+      ansible.builtin.get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-    - name: Configure Docker for ubuntu stable repository
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
-        state: present
-    - name: Update apt packages
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+    - name: Add Docker's apt repository
+      ansible.builtin.command: >
+        sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list'
+    - name: Update apt cache again
       apt:
         update_cache: yes
-    - name: Install docker-ce
+    - name: Install Docker packages
       apt:
-        pkg: [ 'docker-ce', 'docker-ce-cli', 'containerd.io' ]
+        pkg: [ 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-buildx-plugin', 'docker-compose-plugin' ]
         state: present
-    - name: Install docker-compose from official github repo
-      get_url:
-        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
-        dest: /usr/local/bin/docker-compose
-        mode: 'u+x,g+x,o+x'
-    - name: Install docker-compose bash completion
-      get_url:
-        url: https://raw.githubusercontent.com/docker/compose/1.24.0/contrib/completion/bash/docker-compose
-        dest: /etc/bash_completion.d/docker-compose
