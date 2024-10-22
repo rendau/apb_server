@@ -1,11 +1,11 @@
-#- name: ping
-#  import_playbook: playbooks/ping.yml
-#- name: users
-#  import_playbook: playbooks/users.yml
-#- name: apt_upgrade
-#  import_playbook: playbooks/apt_upgrade.yml
-#- name: common_packages
-#  import_playbook: playbooks/common_packages.yml
+- name: ping
+  import_playbook: playbooks/ping.yml
+- name: users
+  import_playbook: playbooks/users.yml
+- name: apt_upgrade
+  import_playbook: playbooks/apt_upgrade.yml
+- name: common_packages
+  import_playbook: playbooks/common_packages.yml
 - name: python
   import_playbook: playbooks/python.yml
 - name: docker
